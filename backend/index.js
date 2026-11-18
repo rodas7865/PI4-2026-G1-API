@@ -30,6 +30,7 @@ app.use(
 	})
 );
 
+
 //middleware para tratar erros
 app.use((err, req, res, next) => {
   res.status(err.status || 500).json({
@@ -41,9 +42,13 @@ app.use((err, req, res, next) => {
 //controllers
 const tokensController = require('./controllers/tokens');
 const usersController = require('./controllers/users');
+const materialsController = require('./controllers/materials');
 
+//falta o middleware de role base auth & implementar o resto das rotas
 app.use('/tokens', tokensController);
-app.use('/users', authorize, usersController);
+app.use('/users', usersController);
+app.use('/materials', authorize, materialsController);
+
 
 app.get('/', (req, res) => {
 	res.send('API is running');

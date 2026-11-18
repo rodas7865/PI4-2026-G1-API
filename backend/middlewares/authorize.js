@@ -3,17 +3,17 @@ const authenticate = require('./authenticate');
 
 const authorizationQuery = `
 	SELECT
-		r.rolename AS role,
-		COALESCE(BOOL_OR(rp.canread), FALSE) AS "canRead",
-		COALESCE(BOOL_OR(rp.canwrite), FALSE) AS "canWrite"
+		r.role_name AS role,
+		COALESCE(BOOL_OR(rp.can_read), FALSE) AS "canRead",
+		COALESCE(BOOL_OR(rp.can_write), FALSE) AS "canWrite"
 	FROM worker w
-	JOIN role r ON r.rolename = w.role
-	LEFT JOIN role_permissions rp ON rp.roleid = r.roleid
+	JOIN app_role r ON r.role_id = w.role_id
+	LEFT JOIN role_permissions rp ON rp.role_id = r.role_id
 	LEFT JOIN permission p
-		ON p.permissionid = rp.permissionid
-		AND p.permissionname = $2
-	WHERE w.userid = $1
-	GROUP BY r.rolename
+		ON p.permission_id = rp.permission_id
+		AND p.permission_name = $2
+	WHERE w.user_id = $1
+	GROUP BY r.role_name;
 `;
 
 const permissionByMethod = {
@@ -33,7 +33,7 @@ const permissionByPath = {
 	'Internal notes': ['/internal-notes', '/notes'],
 	'Shared documents': ['/shared-documents', '/documents', '/files'],
 	Communication: ['/communication', '/messages'],
-	Catalogs: ['/catalogs', '/work-types', '/materials', '/teeth', '/colors'],
+	'Catálogos' : ['/catalogs', '/work-types', '/materials', '/teeth', '/colors'],
 };
 
 function permissionForPath(requestPath) {

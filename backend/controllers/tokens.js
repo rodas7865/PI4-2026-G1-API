@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
     try {
-        const result = await db.query('SELECT * FROM users WHERE email = $1', [req.body.email]);
+        const result = await db.query('SELECT * FROM app_user WHERE email = $1', [req.body.email]);
 
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'User not found' });
@@ -22,9 +22,9 @@ router.post('/', async (req, res) => {
             return res.status(401).json({ error: 'Invalid password' });
         }
 
-        const token = jwt.sign({ user: user.userid }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ user: user.user_id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         console.log('Generated JWT token:', token);
-        console.log('userid:', user.userid);
+        console.log('userid:', user.user_id);
         res.cookie('token', token, { httpOnly: true, secure: true });
         res.send('Token created');
 
