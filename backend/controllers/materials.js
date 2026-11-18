@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
 
-router.get('/', async (req, res) => {
+router.get('/', async (_req, res) => {
     try {
-        const result = await db.query('SELECT * FROM material'); //FIX Query
+        const result = await db.query('SELECT material_id, name FROM material ORDER BY material_id');
         res.json(result.rows);
     } catch (error) {
         console.error('Error fetching materials:', error);
@@ -14,52 +14,65 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const { id, name, description } = req.body;
-        const result = await db.query('SELECT row_to_json(fn_create_app_user($1::VARCHAR(100),$2::VARCHAR(100),$3::VARCHAR(255)))::jsonb - \'password\'', [id, name, description]);
-        //Fix query function and fields
+        const { name } = req.body;
+        const result = await db.query(
+            'SELECT row_to_json(fn_create_material($1::VARCHAR(100)))::jsonb',
+            [name]
+        );
         res.status(201).json(result.rows[0]);
     } catch (error) {
-        console.error('Error creating user:', error);
-        res.status(500).json(error);
-    }   
+        console.error('Error creating material:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
 router.get('/:materialId', async (req, res) => {
     try {
-        const {materialId} = req.params;
+        const { materialId } = req.params;
+        const result = await db.query(
+            'SELECT material_id, name FROM material WHERE material_id = $1',
+            [materialId]
+        );
 
-        const result = await db.query(`SELECT * FROM role WHERE role_id = $1`, [materialId]);
-        //Check query fields
-        res.json(result.rows);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Material not found' });
+        }
+
+        res.json(result.rows[0]);
     } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching material:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 router.patch('/:materialId', async (req, res) => {
     try {
-        const {materialId} = req.params;
-        const { name, description } = req.body;
+        const { materialId } = req.params;
+        const { name } = req.body;
 
-        const result = await db.query('SELECT row_to_json(fn_update_app_user($1::VARCHAR(100),$2::VARCHAR(100),$3::VARCHAR(100),$4::VARCHAR(255),$5::VARCHAR(50),$6::VARCHAR(50),$7::VARCHAR(200)))::jsonb - \'password\'', [materialId, name, description ]);
-        //Query is wrong
-        res.json(result.rows);
+        const result = await db.query(
+            'SELECT row_to_json(fn_update_material($1, $2::VARCHAR(100)))::jsonb AS material',
+            [materialId, name]
+        );
+
+        if (!result.rows[0]?.material) {
+            return res.status(404).json({ error: 'Material not found' });
+        }
+
+        res.json(result.rows[0].material);
     } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error updating material:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 router.delete('/:materialId', async (req, res) => {
     try {
-        const {materialId} = req.params;
-
-        const result = await db.query('EXECUTE sp_remove_app_user($1::INTEGER)', [materialId]);
-        //Fix Process
-        res.json(result.rows);
+        const { materialId } = req.params;
+        await db.query('CALL sp_remove_material($1)', [materialId]);
+        res.status(204).send();
     } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error deleting material:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });

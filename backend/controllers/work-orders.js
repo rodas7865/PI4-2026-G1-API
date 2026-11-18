@@ -2,64 +2,91 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
 
-router.get('/', async (req, res) => {
+router.get('/', async (_req, res) => {
     try {
-        const result = await db.query('SELECT * FROM '); //FIX Query
+        const result = await db.query('SELECT * FROM work_order ORDER BY work_order_id');
         res.json(result.rows);
     } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching work orders:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 router.post('/', async (req, res) => {
     try {
-        const { id, name, description } = req.body;//
-        const result = await db.query('SELECT row_to_json(fn_create_app_user($1::VARCHAR(100),$2::VARCHAR(100),$3::VARCHAR(255)))::jsonb - \'password\'', [id, name, description]);
-        //Fix query function and fields
-        res.status(201).json(result.rows[0]);
+        const {
+            clientId,
+            patientId,
+            nextAppointmentDate,
+            patientExternalId,
+            sex,
+            age,
+        } = req.body;
+        const result = await db.query(
+            'SELECT row_to_json(fn_create_work_order($1::INTEGER,$2::VARCHAR(50),$3::DATE,$4::VARCHAR(150),$5::VARCHAR(20),$6::INTEGER)) AS work_order',
+            [clientId, patientId, nextAppointmentDate, patientExternalId, sex, age]
+        );
+        res.status(201).json(result.rows[0].work_order);
     } catch (error) {
-        console.error('Error creating user:', error);
-        res.status(500).json(error);
-    }   
+        console.error('Error creating work order:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
 router.get('/:workOrderId', async (req, res) => {
     try {
-        const {workOrderId} = req.params;
-
-        const result = await db.query(`SELECT * FROM role WHERE role_id = $1`, [workOrderId]);
-        //Check query fields
-        res.json(result.rows);
+        const result = await db.query(
+            'SELECT * FROM work_order WHERE work_order_id = $1',
+            [req.params.workOrderId]
+        );
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Work order not found' });
+        }
+        res.json(result.rows[0]);
     } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching work order:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 router.patch('/:workOrderId', async (req, res) => {
     try {
-        const {workOrderId} = req.params;
-        const { name, description } = req.body;
-
-        const result = await db.query('SELECT row_to_json(fn_update_app_user($1::VARCHAR(100),$2::VARCHAR(100),$3::VARCHAR(100),$4::VARCHAR(255),$5::VARCHAR(50),$6::VARCHAR(50),$7::VARCHAR(200)))::jsonb - \'password\'', [workOrderId, name, description ]);
-        //Query is wrong
-        res.json(result.rows);
+        const {
+            clientId,
+            patientId,
+            nextAppointmentDate,
+            patientExternalId,
+            sex,
+            age,
+        } = req.body;
+        const result = await db.query(
+            'SELECT row_to_json(fn_update_work_order($1::INTEGER,$2::INTEGER,$3::VARCHAR(50),$4::DATE,$5::VARCHAR(150),$6::VARCHAR(20),$7::INTEGER)) AS work_order',
+            [
+                req.params.workOrderId,
+                clientId,
+                patientId,
+                nextAppointmentDate,
+                patientExternalId,
+                sex,
+                age,
+            ]
+        );
+        if (!result.rows[0].work_order) {
+            return res.status(404).json({ error: 'Work order not found' });
+        }
+        res.json(result.rows[0].work_order);
     } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error updating work order:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 router.delete('/:workOrderId', async (req, res) => {
     try {
-        const {workOrderId} = req.params;
-
-        const result = await db.query('EXECUTE sp_remove_app_user($1::INTEGER)', [workOrderId]);
-        //Fix Process
-        res.json(result.rows);
+        await db.query('CALL sp_remove_work_order($1::INTEGER)', [req.params.workOrderId]);
+        res.status(204).send();
     } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error deleting work order:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });

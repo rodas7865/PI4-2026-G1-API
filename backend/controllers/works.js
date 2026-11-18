@@ -4,22 +4,32 @@ const db = require('../config/database');
 
 router.get('/', async (req, res) => {
     try {
-        const result = await db.query('SELECT * FROM '); //FIX Query
+        const result = await db.query('SELECT * FROM work');
         res.json(result.rows);
     } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching works:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
 router.post('/', async (req, res) => {
     try {
-        const { id, name, description } = req.body;//
-        const result = await db.query('SELECT row_to_json(fn_create_app_user($1::VARCHAR(100),$2::VARCHAR(100),$3::VARCHAR(255)))::jsonb - \'password\'', [id, name, description]);
-        //Fix query function and fields
+        const {
+            workOrderId,
+            workTypeId,
+            materialId,
+            status,
+            colorId,
+            additionalInformation,
+            nature,
+        } = req.body;
+        const result = await db.query(
+            'SELECT row_to_json(fn_create_work($1::INTEGER,$2::INTEGER,$3::INTEGER,$4::VARCHAR(50),$5::INTEGER,$6::VARCHAR(200),$7::VARCHAR(20))) AS work',
+            [workOrderId, workTypeId, materialId, status, colorId, additionalInformation, nature]
+        );
         res.status(201).json(result.rows[0]);
     } catch (error) {
-        console.error('Error creating user:', error);
+        console.error('Error creating work:', error);
         res.status(500).json(error);
     }   
 });
@@ -28,11 +38,10 @@ router.get('/:workId', async (req, res) => {
     try {
         const {workId} = req.params;
 
-        const result = await db.query(`SELECT * FROM role WHERE role_id = $1`, [workId]);
-        //Check query fields
+        const result = await db.query('SELECT * FROM work WHERE work_id = $1', [workId]);
         res.json(result.rows);
     } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error fetching work:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -40,13 +49,23 @@ router.get('/:workId', async (req, res) => {
 router.patch('/:workId', async (req, res) => {
     try {
         const {workId} = req.params;
-        const { name, description } = req.body;
+        const {
+            workOrderId,
+            workTypeId,
+            materialId,
+            status,
+            colorId,
+            additionalInformation,
+            nature,
+        } = req.body;
 
-        const result = await db.query('SELECT row_to_json(fn_update_app_user($1::VARCHAR(100),$2::VARCHAR(100),$3::VARCHAR(100),$4::VARCHAR(255),$5::VARCHAR(50),$6::VARCHAR(50),$7::VARCHAR(200)))::jsonb - \'password\'', [workId, name, description ]);
-        //Query is wrong
-        res.json(result.rows);
+        const result = await db.query(
+            'SELECT row_to_json(fn_update_work($1::INTEGER,$2::INTEGER,$3::INTEGER,$4::INTEGER,$5::VARCHAR(50),$6::INTEGER,$7::VARCHAR(200),$8::VARCHAR(20))) AS work',
+            [workId, workOrderId, workTypeId, materialId, status, colorId, additionalInformation, nature]
+        );
+        res.json(result.rows[0]);
     } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error updating work:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -55,11 +74,10 @@ router.delete('/:workId', async (req, res) => {
     try {
         const {workId} = req.params;
 
-        const result = await db.query('EXECUTE sp_remove_app_user($1::INTEGER)', [workId]);
-        //Fix Process
-        res.json(result.rows);
+        await db.query('CALL sp_remove_work($1::INTEGER)', [workId]);
+        res.status(204).send();
     } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error deleting work:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
