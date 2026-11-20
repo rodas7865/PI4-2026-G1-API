@@ -1,0 +1,2206 @@
+openapi: 3.0.3
+
+info:
+  title: API Dental Lab
+  version: 2.1.0
+  description: API para integração com o sistema de gestão do laboratório odontológico.
+
+security:
+  - cookieSession: []
+
+paths:
+  /tokens:
+    post:
+      security: []
+      summary: Gerar token de autenticação
+      description: Gera um token de autenticação para o usuário com base nas credenciais fornecidas.
+      requestBody:
+        description: Credenciais do usuário para autenticação.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+      responses:
+        '200':
+          description: Token gerado com sucesso.
+        '401':
+          description: Credenciais inválidas.
+        '500':
+          description: Erro interno do servidor.
+  /users:
+    get:
+      summary: Listar todos os usuários
+      description: Retorna uma lista de todos os usuários cadastrados no sistema.
+      responses:
+        '200':
+          description: Lista de usuários retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '500':
+          description: Erro interno do servidor.
+    post:
+      summary: Criar um novo usuário
+      description: Cria um novo usuário no sistema com base nos dados fornecidos.
+      requestBody:
+        description: Dados do usuário a ser criado.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+      responses:
+        '201':
+          description: Usuário criado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Requisição inválida.
+        '500':
+          description: Erro interno do servidor.
+  /users/{userId}:
+    get:
+      summary: Obter detalhes de um usuário específico
+      description: Retorna os detalhes de um usuário específico com base no ID fornecido.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID do usuário a ser obtido.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detalhes do usuário retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Usuário não encontrado.
+        '500':
+          description: Erro interno do servidor.
+    patch:
+      summary: Atualizar um usuário específico
+      description: Atualiza os detalhes de um usuário específico com base no ID fornecido.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID do usuário a ser atualizado.
+          schema:
+            type: string
+      requestBody:
+        description: Dados do usuário a serem atualizados.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Usuário atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Requisição inválida.
+        '404':
+          description: Usuário não encontrado.
+        '500':
+          description: Erro interno do servidor.
+    delete:
+        summary: Excluir um usuário específico
+        description: Exclui um usuário específico com base no ID fornecido.
+        parameters:
+          - name: userId
+            in: path
+            required: true
+            description: ID do usuário a ser excluído.
+            schema:
+              type: string
+        responses:
+          '204':
+            description: Usuário excluído com sucesso.
+          '404':
+            description: Usuário não encontrado.
+          '500':
+            description: Erro interno do servidor.
+  /roles:
+    get:
+      summary: Listar todos os papéis
+      description: Retorna uma lista de todos os papéis disponíveis no sistema.
+      responses:
+        '200':
+          description: Lista de papéis retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+        '500':
+          description: Erro interno do servidor.
+    post:
+      summary: Criar um novo papel
+      description: Cria um novo papel no sistema com base nos dados fornecidos.
+      requestBody:
+        description: Dados do papel a ser criado.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+      responses:
+        '201':
+          description: Papel criado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '400':
+          description: Requisição inválida.
+        '500':
+          description: Erro interno do servidor.
+  /roles/{roleId}:
+    get:
+      summary: Obter detalhes de um papel específico
+      description: Retorna os detalhes de um papel específico com base no ID fornecido.
+      parameters:
+        - name: roleId
+          in: path
+          required: true
+          description: ID do papel a ser obtido.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detalhes do papel retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '404':
+          description: Papel não encontrado.
+        '500':
+          description: Erro interno do servidor.
+    patch:
+      summary: Atualizar um papel específico
+      description: Atualiza os detalhes de um papel específico com base no ID fornecido.
+      parameters:
+        - name: roleId
+          in: path
+          required: true
+          description: ID do papel a ser atualizado.
+          schema:
+            type: string
+      requestBody:
+        description: Dados do papel a serem atualizados.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+      responses:
+        '200':
+          description: Papel atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        '400':
+          description: Requisição inválida.
+        '404':
+          description: Papel não encontrado.
+        '500':
+          description: Erro interno do servidor.
+    delete:
+        summary: Excluir um papel específico
+        description: Exclui um papel específico com base no ID fornecido.
+        parameters:
+          - name: roleId
+            in: path
+            required: true
+            description: ID do papel a ser excluído.
+            schema:
+              type: string
+        responses:
+          '204':
+            description: Papel excluído com sucesso.
+          '404':
+            description: Papel não encontrado.
+          '500':
+            description: Erro interno do servidor.
+  /clients:
+    get:
+      summary: Listar clientes
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de clientes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+        '500':
+          description: Erro interno do servidor.
+    post:
+      summary: Criar cliente
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientInput'
+      responses:
+        '201':
+          description: Cliente criado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '400':
+          description: Requisição inválida.
+  /clients/{clientId}:
+    get:
+      summary: Obter cliente
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+      responses:
+        '200':
+          description: Cliente encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '404':
+          description: Cliente não encontrado.
+    patch:
+      summary: Atualizar cliente
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientInput'
+      responses:
+        '200':
+          description: Cliente atualizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '404':
+          description: Cliente não encontrado.
+    delete:
+      summary: Excluir cliente
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/clientId'
+      responses:
+        '204':
+          description: Cliente excluído.
+        '404':
+          description: Cliente não encontrado.
+
+  /work-orders:
+    get:
+      summary: Listar ordens de serviço
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de ordens de serviço.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkOrder'
+    post:
+      summary: Criar ordem de serviço
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderInput'
+      responses:
+        '201':
+          description: Ordem de serviço criada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+        '400':
+          description: Requisição inválida.
+  /work-orders/{workOrderId}:
+    get:
+      summary: Obter ordem de serviço
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/workOrderId'
+      responses:
+        '200':
+          description: Ordem de serviço encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+        '404':
+          description: Ordem de serviço não encontrada.
+    patch:
+      summary: Atualizar ordem de serviço
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/workOrderId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderInput'
+      responses:
+        '200':
+          description: Ordem de serviço atualizada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+        '404':
+          description: Ordem de serviço não encontrada.
+    delete:
+      summary: Excluir ordem de serviço
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/workOrderId'
+      responses:
+        '204':
+          description: Ordem de serviço excluída.
+        '404':
+          description: Ordem de serviço não encontrada.
+
+  /works:
+    get:
+      summary: Listar trabalhos
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de trabalhos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Work'
+    post:
+      summary: Criar trabalho
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkInput'
+      responses:
+        '201':
+          description: Trabalho criado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+        '400':
+          description: Requisição inválida.
+  /works/{workId}:
+    get:
+      summary: Obter trabalho
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/workId'
+      responses:
+        '200':
+          description: Trabalho encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+        '404':
+          description: Trabalho não encontrado.
+    patch:
+      summary: Atualizar trabalho
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/workId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkInput'
+      responses:
+        '200':
+          description: Trabalho atualizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+        '404':
+          description: Trabalho não encontrado.
+    delete:
+      summary: Excluir trabalho
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/workId'
+      responses:
+        '204':
+          description: Trabalho excluído.
+        '404':
+          description: Trabalho não encontrado.
+
+  /patients:
+    get:
+      summary: Listar pacientes
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de pacientes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Patient'
+    post:
+      summary: Criar paciente
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientInput'
+      responses:
+        '201':
+          description: Paciente criado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+  /patients/{patientId}:
+    get:
+      summary: Obter paciente
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/patientId'
+      responses:
+        '200':
+          description: Paciente encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '404':
+          description: Paciente não encontrado.
+    patch:
+      summary: Atualizar paciente
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/patientId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientInput'
+      responses:
+        '200':
+          description: Paciente atualizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '404':
+          description: Paciente não encontrado.
+    delete:
+      summary: Excluir paciente
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/patientId'
+      responses:
+        '204':
+          description: Paciente excluído.
+        '404':
+          description: Paciente não encontrado.
+
+  /work-teeth:
+    get:
+      summary: Listar relações entre trabalhos e dentes
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de relações trabalho-dente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkTooth'
+    post:
+      summary: Associar dente a trabalho
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkTooth'
+      responses:
+        '201':
+          description: Relação trabalho-dente criada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkTooth'
+  /work-teeth/{workId}/{toothId}:
+    parameters:
+      - $ref: '#/components/parameters/workId'
+      - $ref: '#/components/parameters/toothId'
+    get:
+      summary: Obter relação entre trabalho e dente
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Relação trabalho-dente encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkTooth'
+        '404':
+          description: Relação não encontrada.
+    patch:
+      summary: Atualizar relação entre trabalho e dente
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkTooth'
+      responses:
+        '200':
+          description: Relação trabalho-dente atualizada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkTooth'
+        '404':
+          description: Relação não encontrada.
+    delete:
+      summary: Remover relação entre trabalho e dente
+      security:
+        - cookieSession: []
+      responses:
+        '204':
+          description: Relação trabalho-dente removida.
+        '404':
+          description: Relação não encontrada.
+
+  /role-permissions:
+    get:
+      summary: Listar associações entre papéis e permissões
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de associações papel-permissão.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RolePermissions'
+    post:
+      summary: Criar associação entre papel e permissão
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RolePermissions'
+      responses:
+        '201':
+          description: Associação papel-permissão criada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RolePermissions'
+  /role-permissions/{roleId}/{permissionId}:
+    parameters:
+      - $ref: '#/components/parameters/roleId'
+      - $ref: '#/components/parameters/permissionId'
+    get:
+      summary: Obter associação entre papel e permissão
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Associação papel-permissão encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RolePermissions'
+        '404':
+          description: Associação não encontrada.
+    patch:
+      summary: Atualizar associação entre papel e permissão
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RolePermissions'
+      responses:
+        '200':
+          description: Associação papel-permissão atualizada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RolePermissions'
+        '404':
+          description: Associação não encontrada.
+    delete:
+      summary: Excluir associação entre papel e permissão
+      security:
+        - cookieSession: []
+      responses:
+        '204':
+          description: Associação papel-permissão excluída.
+        '404':
+          description: Associação não encontrada.
+
+  /logs:
+    get:
+      summary: Listar registros de auditoria
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de registros de auditoria.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Log'
+  /stage-records:
+    get:
+      summary: Listar registros de etapas
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de registros de etapas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StageRecord'
+    post:
+      summary: Registrar etapa de trabalho
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StageRecordInput'
+      responses:
+        '201':
+          description: Etapa registrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StageRecord'
+  /stage-records/{stageRecordId}:
+    parameters:
+      - name: stageRecordId
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Obter registro de etapa
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Registro de etapa encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StageRecord'
+        '404':
+          description: Registro de etapa não encontrado.
+    patch:
+      summary: Atualizar registro de etapa
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StageRecordInput'
+      responses:
+        '200':
+          description: Registro de etapa atualizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StageRecord'
+        '404':
+          description: Registro de etapa não encontrado.
+    delete:
+      summary: Excluir registro de etapa
+      security:
+        - cookieSession: []
+      responses:
+        '204':
+          description: Registro de etapa excluído.
+        '404':
+          description: Registro de etapa não encontrado.
+
+  /collaborators:
+    get:
+      summary: Listar colaboradores
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de colaboradores.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Worker'
+  /workers:
+    get:
+      summary: Listar trabalhadores
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de trabalhadores.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Worker'
+    post:
+      summary: Criar trabalhador
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Worker'
+      responses:
+        '201':
+          description: Trabalhador criado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Worker'
+  /workers/{workerId}:
+    get:
+      summary: Obter trabalhador
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/workerId'
+      responses:
+        '200':
+          description: Trabalhador encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Worker'
+        '404':
+          description: Trabalhador não encontrado.
+    patch:
+      summary: Atualizar trabalhador
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/workerId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Worker'
+      responses:
+        '200':
+          description: Trabalhador atualizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Worker'
+        '404':
+          description: Trabalhador não encontrado.
+    delete:
+      summary: Excluir trabalhador
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/workerId'
+      responses:
+        '204':
+          description: Trabalhador excluído.
+        '404':
+          description: Trabalhador não encontrado.
+  /notes:
+    get:
+      summary: Listar notas
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de notas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Note'
+    post:
+      summary: Criar nota
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NoteInput'
+      responses:
+        '201':
+          description: Nota criada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+  /notes/{noteId}:
+    get:
+      summary: Obter nota
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/noteId'
+      responses:
+        '200':
+          description: Nota encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+        '404':
+          description: Nota não encontrada.
+    patch:
+      summary: Atualizar nota
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/noteId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NoteInput'
+      responses:
+        '200':
+          description: Nota atualizada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+        '404':
+          description: Nota não encontrada.
+    delete:
+      summary: Excluir nota
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/noteId'
+      responses:
+        '204':
+          description: Nota excluída.
+        '404':
+          description: Nota não encontrada.
+  /files:
+    get:
+      summary: Listar arquivos
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de arquivos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/File'
+    post:
+      summary: Enviar arquivo
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileInput'
+      responses:
+        '201':
+          description: Arquivo enviado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+  /files/{fileId}:
+    get:
+      summary: Obter arquivo
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/fileId'
+      responses:
+        '200':
+          description: Arquivo encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+        '404':
+          description: Arquivo não encontrado.
+    patch:
+      summary: Atualizar arquivo
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/fileId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileInput'
+      responses:
+        '200':
+          description: Arquivo atualizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+        '404':
+          description: Arquivo não encontrado.
+    delete:
+      summary: Excluir arquivo
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/fileId'
+      responses:
+        '204':
+          description: Arquivo excluído.
+        '404':
+          description: Arquivo não encontrado.
+  /work-types:
+    get:
+      summary: Listar tipos de trabalho
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de tipos de trabalho.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkType'
+    post:
+      summary: Criar tipo de trabalho
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkType'
+      responses:
+        '201':
+          description: Tipo de trabalho criado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkType'
+  /work-types/{workTypeId}:
+    get:
+      summary: Obter tipo de trabalho
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/workTypeId'
+      responses:
+        '200':
+          description: Tipo de trabalho encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkType'
+        '404':
+          description: Tipo de trabalho não encontrado.
+    patch:
+      summary: Atualizar tipo de trabalho
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/workTypeId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkType'
+      responses:
+        '200':
+          description: Tipo de trabalho atualizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkType'
+        '404':
+          description: Tipo de trabalho não encontrado.
+    delete:
+      summary: Excluir tipo de trabalho
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/workTypeId'
+      responses:
+        '204':
+          description: Tipo de trabalho excluído.
+        '404':
+          description: Tipo de trabalho não encontrado.
+  /materials:
+    get:
+      summary: Listar materiais
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de materiais.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Material'
+    post:
+      summary: Criar material
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Material'
+      responses:
+        '201':
+          description: Material criado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Material'
+  /materials/{materialId}:
+    get:
+      summary: Obter material
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/materialId'
+      responses:
+        '200':
+          description: Material encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Material'
+        '404':
+          description: Material não encontrado.
+    patch:
+      summary: Atualizar material
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/materialId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Material'
+      responses:
+        '200':
+          description: Material atualizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Material'
+        '404':
+          description: Material não encontrado.
+    delete:
+      summary: Excluir material
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/materialId'
+      responses:
+        '204':
+          description: Material excluído.
+        '404':
+          description: Material não encontrado.
+  /teeth:
+    get:
+      summary: Listar dentes
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de dentes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tooth'
+    post:
+      summary: Criar dente
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tooth'
+      responses:
+        '201':
+          description: Dente criado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tooth'
+  /teeth/{toothId}:
+    get:
+      summary: Obter dente
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/toothId'
+      responses:
+        '200':
+          description: Dente encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tooth'
+        '404':
+          description: Dente não encontrado.
+    patch:
+      summary: Atualizar dente
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/toothId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tooth'
+      responses:
+        '200':
+          description: Dente atualizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tooth'
+        '404':
+          description: Dente não encontrado.
+    delete:
+      summary: Excluir dente
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/toothId'
+      responses:
+        '204':
+          description: Dente excluído.
+        '404':
+          description: Dente não encontrado.
+  /colors:
+    get:
+      summary: Listar cores
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de cores.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Color'
+    post:
+      summary: Criar cor
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Color'
+      responses:
+        '201':
+          description: Cor criada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Color'
+  /colors/{colorId}:
+    get:
+      summary: Obter cor
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/colorId'
+      responses:
+        '200':
+          description: Cor encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Color'
+        '404':
+          description: Cor não encontrada.
+    patch:
+      summary: Atualizar cor
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/colorId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Color'
+      responses:
+        '200':
+          description: Cor atualizada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Color'
+        '404':
+          description: Cor não encontrada.
+    delete:
+      summary: Excluir cor
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/colorId'
+      responses:
+        '204':
+          description: Cor excluída.
+        '404':
+          description: Cor não encontrada.
+
+  /stages:
+    get:
+      summary: Listar etapas
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de etapas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Stage'
+    post:
+      summary: Criar etapa
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Stage'
+      responses:
+        '201':
+          description: Etapa criada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stage'
+  /stages/{stageId}:
+    get:
+      summary: Obter etapa
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/stageId'
+      responses:
+        '200':
+          description: Etapa encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stage'
+        '404':
+          description: Etapa não encontrada.
+    patch:
+      summary: Atualizar etapa
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/stageId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Stage'
+      responses:
+        '200':
+          description: Etapa atualizada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stage'
+        '404':
+          description: Etapa não encontrada.
+    delete:
+      summary: Excluir etapa
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/stageId'
+      responses:
+        '204':
+          description: Etapa excluída.
+        '404':
+          description: Etapa não encontrada.
+  /stage-indexes:
+    get:
+      summary: Listar etapas por tipo de trabalho
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Lista de etapas associadas aos tipos de trabalho.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StageIndex'
+    post:
+      summary: Associar etapa a tipo de trabalho
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StageIndex'
+      responses:
+        '201':
+          description: Associação criada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StageIndex'
+  /stage-indexes/{stageIndexId}:
+    get:
+      summary: Obter associação de etapa e tipo de trabalho
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/stageIndexId'
+      responses:
+        '200':
+          description: Associação encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StageIndex'
+        '404':
+          description: Associação não encontrada.
+    patch:
+      summary: Atualizar associação de etapa e tipo de trabalho
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/stageIndexId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StageIndex'
+      responses:
+        '200':
+          description: Associação atualizada.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StageIndex'
+        '404':
+          description: Associação não encontrada.
+    delete:
+      summary: Excluir associação de etapa e tipo de trabalho
+      security:
+        - cookieSession: []
+      parameters:
+        - $ref: '#/components/parameters/stageIndexId'
+      responses:
+        '204':
+          description: Associação excluída.
+        '404':
+          description: Associação não encontrada.
+
+  /physical-materials:
+    get:
+      summary: Listar materiais físicos enviados
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Materiais físicos associados aos trabalhos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PhysicalMaterial'
+    post:
+      summary: Registrar envio de material físico
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhysicalMaterialInput'
+      responses:
+        '201':
+          description: Envio registrado.
+
+  /physical-materials/{physicalMaterialId}:
+    parameters:
+      - $ref: '#/components/parameters/physicalMaterialId'
+    get:
+      summary: Obter material físico enviado
+      security:
+        - cookieSession: []
+      responses:
+        '200':
+          description: Material físico encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhysicalMaterial'
+        '404':
+          description: Material físico não encontrado.
+    patch:
+      summary: Atualizar material físico enviado
+      security:
+        - cookieSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhysicalMaterialInput'
+      responses:
+        '200':
+          description: Material físico atualizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhysicalMaterial'
+        '404':
+          description: Material físico não encontrado.
+    delete:
+      summary: Excluir material físico enviado
+      security:
+        - cookieSession: []
+      responses:
+        '204':
+          description: Material físico excluído.
+        '404':
+          description: Material físico não encontrado.
+
+  /work-types/{workTypeId}/stages:
+    get:
+      summary: Listar etapas de um tipo de trabalho
+      security:
+        - cookieSession: []
+      parameters:
+        - name: workTypeId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Etapas ordenadas do tipo de trabalho.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StageIndex'
+
+components:
+  parameters:
+    noteId:
+        name: noteId
+        in: path
+        required: true
+        schema:
+          type: integer
+    workerId:
+        name: workerId
+        in: path
+        required: true
+        schema:
+          type: integer
+    fileId:
+        name: fileId
+        in: path
+        required: true
+        schema:
+          type: integer
+    workTypeId:
+        name: workTypeId
+        in: path
+        required: true
+        schema:
+          type: integer
+    materialId:
+        name: materialId
+        in: path
+        required: true
+        schema:
+          type: integer
+    stageIndexId:
+        name: stageIndexId
+        in: path
+        required: true
+        schema:
+          type: integer
+    colorId:
+        name: colorId
+        in: path
+        required: true
+        schema:
+          type: integer
+    stageId:
+        name: stageId
+        in: path
+        required: true
+        schema:
+          type: integer
+    worderId:
+        name: workerId
+        in: path
+        required: true
+        schema:
+          type: integer
+    clientId:
+      name: clientId
+      in: path
+      required: true
+      schema:
+        type: integer
+    workOrderId:
+      name: workOrderId
+      in: path
+      required: true
+      schema:
+        type: integer
+    workId:
+      name: workId
+      in: path
+      required: true
+      schema:
+        type: integer
+    patientId:
+      name: patientId
+      in: path
+      required: true
+      schema:
+        type: string
+    toothId:
+      name: toothId
+      in: path
+      required: true
+      schema:
+        type: integer
+    roleId:
+      name: roleId
+      in: path
+      required: true
+      schema:
+        type: integer
+    permissionId:
+      name: permissionId
+      in: path
+      required: true
+      schema:
+        type: integer
+    logId:
+      name: logId
+      in: path
+      required: true
+      schema:
+        type: integer
+    physicalMaterialId:
+      name: physicalMaterialId
+      in: path
+      required: true
+      schema:
+        type: integer
+  securitySchemes:
+    cookieSession:
+      type: apiKey
+      in: cookie
+      name: token
+      description: Authentication session cookie
+  schemas:
+    AuthRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    User:
+      type: object
+      properties:
+        userId:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        accountStatus:
+          type: string
+          enum: [active, inactive, verification]
+        accountType:
+          type: string
+          enum: [client, worker, admin]
+        contactInfo:
+          type: string
+    
+    CreateUser:
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        accountStatus:
+          type: string
+          enum: [active, inactive, verification]
+        accountType:
+          type: string
+          enum: [client, worker, admin]
+        contactInfo:
+          type: string
+      required:
+        - name
+        - password
+        - email
+        - accountStatus
+        - accountType
+
+    UserUpdate:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          minProperties: 1
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+    
+    Permission:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+
+    RolePermissions:
+      type: object
+      properties:
+        roleId:
+          type: integer
+        permissionId:
+          type: integer
+        canRead:
+          type: boolean
+        canWrite:
+          type: boolean
+
+    Client:
+      type: object
+      properties:
+        clientId:
+          type: integer
+        userId:
+          type: integer
+        nif:
+          type: string
+          maxLength: 30
+        address:
+          type: string
+          maxLength: 250
+      required: [clientId, userId, nif]
+    ClientInput:
+      type: object
+      properties:
+        userId:
+          type: integer
+        nif:
+          type: string
+          maxLength: 30
+        address:
+          type: string
+          maxLength: 250
+      required: [userId, nif]
+    Patient:
+      type: object
+      properties:
+        patientId:
+          type: string
+          maxLength: 50
+      required: [patientId]
+    PatientInput:
+      type: object
+      properties:
+        patientId:
+          type: string
+          maxLength: 50
+      required: [patientId]
+    WorkOrder:
+      type: object
+      properties:
+        workOrderId:
+          type: integer
+        clientId:
+          type: integer
+        patientId:
+          type: string
+        nextAppointmentDate:
+          type: string
+          format: date
+        patientExternalId:
+          type: string
+          maxLength: 150
+        sex:
+          type: string
+          maxLength: 20
+        age:
+          type: integer
+        creationDateTime:
+          type: string
+          format: date-time
+      required: [workOrderId, clientId, patientId, nextAppointmentDate, patientExternalId, creationDateTime]
+    WorkOrderInput:
+      allOf:
+        - $ref: '#/components/schemas/WorkOrder'
+      description: Dados para criar ou atualizar uma ordem de serviço; workOrderId é gerado pelo servidor.
+    Work:
+      type: object
+      properties:
+        workId:
+          type: integer
+        workOrderId:
+          type: integer
+        workTypeId:
+          type: integer
+        materialId:
+          type: integer
+        status:
+          type: string
+        colorId:
+          type: integer
+          nullable: true
+        additionalInformation:
+          type: string
+          maxLength: 200
+        nature:
+          type: string
+          maxLength: 20
+        toothIds:
+          type: array
+          items:
+            type: integer
+      required: [workId, workOrderId, workTypeId, materialId, status]
+    WorkInput:
+      allOf:
+        - $ref: '#/components/schemas/Work'
+      description: Dados para criar ou atualizar um trabalho; workId é gerado pelo servidor.
+    WorkType:
+      type: object
+      properties:
+        workTypeId:
+          type: integer
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 256
+      required: [workTypeId, name]
+    Material:
+      type: object
+      properties:
+        materialId:
+          type: integer
+        name:
+          type: string
+          maxLength: 100
+      required: [materialId, name]
+    Tooth:
+      type: object
+      properties:
+        toothId:
+          type: integer
+        name:
+          type: string
+          maxLength: 20
+    WorkTooth:
+      type: object
+      properties:
+        workId:
+          type: integer
+        toothId:
+          type: integer
+      required: [workId, toothId]
+    Stage:
+      type: object
+      properties:
+        stageId:
+          type: integer
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 256
+      required: [stageId, name]
+    StageIndex:
+      type: object
+      properties:
+        stageIndexId:
+          type: integer
+        workTypeId:
+          type: integer
+        stageId:
+          type: integer
+      required: [stageIndexId, workTypeId, stageId]
+    Color:
+      type: object
+      properties:
+        colorId:
+          type: integer
+        name:
+          type: string
+          maxLength: 100
+      required: [colorId, name]
+    StageRecord:
+      type: object
+      properties:
+        stageRecordId:
+          type: integer
+        workId:
+          type: integer
+        stageId:
+          type: integer
+        workerId:
+          type: integer
+          nullable: true
+        startDateTime:
+          type: string
+          format: date-time
+        endDateTime:
+          type: string
+          format: date-time
+        note:
+          type: string
+          maxLength: 200
+      required: [stageRecordId, workId, stageId]
+    StageRecordInput:
+      type: object
+      properties:
+        workId:
+          type: integer
+        stageId:
+          type: integer
+        workerId:
+          type: integer
+          nullable: true
+        startDateTime:
+          type: string
+          format: date-time
+        endDateTime:
+          type: string
+          format: date-time
+        note:
+          type: string
+          maxLength: 200
+      required: [workId, stageId]
+    Worker:
+      type: object
+      properties:
+        workerId:
+          type: integer
+        userId:
+          type: integer
+        roleId:
+          type: integer
+      required: [workerId, userId, roleId]
+    Note:
+      type: object
+      properties:
+        noteId:
+          type: integer
+        workId:
+          type: integer
+        userId:
+          type: integer
+        content:
+          type: string
+          maxLength: 256
+        creationDateTime:
+          type: string
+          format: date-time
+        isPublic:
+          type: boolean
+      required: [noteId, workId, userId]
+    NoteInput:
+      type: object
+      properties:
+        workId:
+          type: integer
+        content:
+          type: string
+          maxLength: 256
+        isPublic:
+          type: boolean
+      required: [workId, content]
+    File:
+      type: object
+      properties:
+        fileId:
+          type: integer
+        workId:
+          type: integer
+          nullable: true
+        userId:
+          type: integer
+        filename:
+          type: string
+          maxLength: 200
+        fileType:
+          type: string
+          maxLength: 50
+        uploadDateTime:
+          type: string
+          format: date-time
+        base64:
+          type: string
+          format: byte
+        isPublic:
+          type: boolean
+      required: [fileId, userId, base64]
+    FileInput:
+      type: object
+      properties:
+        workId:
+          type: integer
+          nullable: true
+        filename:
+          type: string
+          maxLength: 200
+        fileType:
+          type: string
+          maxLength: 50
+        base64:
+          type: string
+          format: byte
+        isPublic:
+          type: boolean
+      required: [filename, fileType, base64]
+    PhysicalMaterial:
+      type: object
+      properties:
+        physicalMaterialId:
+          type: integer
+        workId:
+          type: integer
+        description:
+          type: string
+          maxLength: 256
+        shippingDate:
+          type: string
+          format: date
+        additionalInformation:
+          type: string
+          maxLength: 256
+      required: [physicalMaterialId, workId]
+    PhysicalMaterialInput:
+      type: object
+      properties:
+        workId:
+          type: integer
+        description:
+          type: string
+          maxLength: 256
+        shippingDate:
+          type: string
+          format: date
+        additionalInformation:
+          type: string
+          maxLength: 256
+      required: [workId]
+    Log:
+      type: object
+      properties:
+        logId:
+          type: integer
+        time:
+          type: string
+          format: date-time
+        tableName:
+          type: string
+          maxLength: 20
+        recordId:
+          type: integer
+        action:
+          type: string
+          enum: [I, U, D]
+        previousInfo:
+          type: string
+          nullable: true
+      required: [logId, tableName, recordId, action]
+    LogInput:
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
+        tableName:
+          type: string
+          maxLength: 20
+        recordId:
+          type: integer
+        action:
+          type: string
+          enum: [I, U, D]
+        previousInfo:
+          type: string
+          nullable: true
+      required: [tableName, recordId, action]
