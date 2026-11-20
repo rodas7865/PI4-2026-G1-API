@@ -11,7 +11,16 @@
     "test": "nodemon index.js"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^18.0.9",
     "express": "^5.3.0",
-    "nodemon": "^3.0.1"
+    "express-openapi-validator": "^5.6.2",
+    "jsonwebtoken": "^9.0.3",
+    "nodemon": "^3.0.1",
+    "pg": "^8.23.1",
+    "swagger-ui-express": "^5.0.1",
+    "yalm": "^4.1.0",
+    "yaml": "^2.9.1"
   }
 }
