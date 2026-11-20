@@ -43,11 +43,37 @@ app.use((err, req, res, next) => {
 const tokensController = require('./controllers/tokens');
 const usersController = require('./controllers/users');
 const materialsController = require('./controllers/materials');
+const clientController = require('./controllers/clients');
+const colorsController = require('./controllers/colors');
+const collaboratorsController = require('./controllers/collaborators');
+const filesController = require('./controllers/files');
+const messagesController = require('./controllers/messages');
+const notesController = require('./controllers/notes');
+const productionController = require('./controllers/production');
+const rolesController = require('./controllers/roles');
+const stageRecordController = require('./controllers/stage-record');
+const stagesController = require('./controllers/stages');
+const workOrdersController = require('./controllers/work-orders');
+const workTypesController = require('./controllers/work-types');
+const workController = require('./controllers/works');
 
 //falta o middleware de role base auth & implementar o resto das rotas
 app.use('/tokens', tokensController);
-app.use('/users', usersController);
+app.use('/users',authorize, usersController);
+app.use('/clients', authorize, clientController);
+app.use('/colors', authorize, colorsController);
+app.use('/collaborators', authorize, collaboratorsController);
+app.use('/files', authorize, filesController);
 app.use('/materials', authorize, materialsController);
+app.use('/messages', authorize, messagesController);
+app.use('/notes', authorize, notesController);
+app.use('/production', authorize, productionController);
+app.use('/roles', authorize, rolesController);
+app.use('/stage-record', authorize, stageRecordController);
+app.use('/stages', authorize, stagesController);
+app.use('/work-orders', authorize, workOrdersController);
+app.use('/work-types', authorize, workTypesController);
+app.use('/work', authorize, workController);
 
 
 app.get('/', (req, res) => {

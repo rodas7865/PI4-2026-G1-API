@@ -7,7 +7,8 @@ const authorizationQuery = `
 		COALESCE(BOOL_OR(rp.can_read), FALSE) AS "canRead",
 		COALESCE(BOOL_OR(rp.can_write), FALSE) AS "canWrite"
 	FROM worker w
-	JOIN app_role r ON r.role_id = w.role_id
+	JOIN app_user u ON u.user_id = w.user_id
+	JOIN app_role r ON r.role_id = u.role_id
 	LEFT JOIN role_permissions rp ON rp.role_id = r.role_id
 	LEFT JOIN permission p
 		ON p.permission_id = rp.permission_id
